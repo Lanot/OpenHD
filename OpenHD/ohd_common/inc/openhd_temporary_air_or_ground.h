@@ -40,9 +40,6 @@ const auto FILENAME_ETHERNET =
     std::string(getConfigBasePath()) + "ethernet.txt";
 
 static bool file_air_exists() {
-
-  std::cout << "\n\n\n\nDEBUG: getConfigBasePath() =  " << getConfigBasePath() << "\n\n\n\n" << std::endl;
-
   return OHDFilesystemUtil::exists(FILENAME_AIR);
 }
 
