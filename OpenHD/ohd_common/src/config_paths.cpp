@@ -43,6 +43,8 @@ const char* getConfigBasePath() {
     return "/config/openhd/";
   } else if (platform_debug.is_x20()) {
     return "/config/openhd/";
+  } else if (std::filesystem::exists('/boot/firmware/openhd')) { // Ubuntu 24.04 fix
+    return '/boot/firmware/openhd/'
   } else {
     return "/boot/openhd/";
   }
