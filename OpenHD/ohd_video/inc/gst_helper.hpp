@@ -435,11 +435,13 @@ static std::string create_rpi_v4l2_h264_encoder(const CameraSettings& settings) 
 
 static std::string create_rpi_h264_encoder(const CameraSettings& settings) {
   const auto platform = OHDPlatform::instance();
+  openhd::log::get_default()->warn("GST HELPER: platform_type = {}", platform.platform_type);
+
   if (platform.is_rpi5()) {
-    openhd::log::get_default()->warn("Create RPI5 H264 encoder");
+    openhd::log::get_default()->warn("GST HELPER: Create RPI5 H264 encoder");
     return create_rpi5_h264_encoder(settings);
   } else {
-    openhd::log::get_default()->warn("Create RPI4/other H264 encoder");
+    openhd::log::get_default()->warn("GST HELPER: Create RPI4/CM4/older H264 encoder");
     return create_rpi_v4l2_h264_encoder(settings);
   }
 }

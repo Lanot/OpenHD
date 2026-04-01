@@ -64,6 +64,8 @@ static int internal_discover_platform() {
     const auto proc_cpuinfo_opt =
         OHDFilesystemUtil::opt_read_file("/proc/cpuinfo");
 
+    openhd::log::get_default()->warn("\n\n\n\nPROC CPUINFO: {}\n\n\n\n", proc_cpuinfo_opt.value());
+
     if (!proc_cpuinfo_opt.has_value()) {
       openhd::log::get_default()->warn(
           "File {} does not exist. Unable to complete Raspberry Pi detection.",
