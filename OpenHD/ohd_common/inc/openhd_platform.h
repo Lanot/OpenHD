@@ -86,6 +86,7 @@ struct OHDPlatform {
   const int platform_type;
   [[nodiscard]] std::string to_string() const;
   static const OHDPlatform& instance();
+
   bool is_rpi() const;
   bool is_rpi5() const;
   bool is_rock() const;
