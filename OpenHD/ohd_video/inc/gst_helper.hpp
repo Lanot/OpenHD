@@ -324,6 +324,73 @@ static int rpi_calculate_intra_refresh_period(int frame_width_px,
 // default for h264_minimum_qp_value seems to be 20 - we set it to something
 // lower, so we can get a higher bitrate on scenes with less change (openhd
 // values consistency over everything else)
+
+static std::string create_rpi_h264_encoder(const CameraSettings& settings) {
+  const auto platform = OHDPlatform::instance();
+  if (platform.is_rpi5()) {
+    openhd::log::get_default()->warn("Create RPI5 H264 encoder");
+    return create_rpi5_h264_encoder(settings);
+  } else {
+    openhd::log::get_default()->warn("Create RPI4/other H264 encoder");
+    return create_rpi_v4l2_h264_encoder(settings);
+  }
+}
+
+static std::string create_rpi5_h264_encoder(
+    const CameraSettings& settings) {
+  assert(settings.streamed_video_format.videoCodec == VideoCodec::H264);
+  // Level wikipedia: https://de.wikipedia.org/wiki/H.264#Level
+  // If the level selected is too low, the stream will straight out not start
+  // (pi cannot really do more than level 4.0, at least not low latency, but for
+  // experimenting, at least make those higher resolutions create a valid
+  // pipeline
+  std::string rpi_h264_encode_level = "4";
+  std::string rpi_h264_encode_level_v4l2_int = "11";
+  if (h264_needs_level_4_2(settings.streamed_video_format,
+                           settings.h26x_bitrate_kbits)) {
+    rpi_h264_encode_level = "4.2";          // Used for gstreamer caps
+    rpi_h264_encode_level_v4l2_int = "13";  // Used for 4l2 control
+  }
+  // NOTE: higher quantization parameter -> lower image quality, and lower
+  // bitrate NOTE: The range of QP value is from 0 to 51. Any value more than 51
+  // is clamped to 51 RPI Default : 20 / 51
+  std::string quantization_str =
+      fmt::format(",h264_minimum_qp_value={},h264_maximum_qp_value={}", 5, 51);
+  std::string intra_refresh_period_str;
+  if (settings.h26x_intra_refresh_type != -1) {
+    const int period = rpi_calculate_intra_refresh_period(
+        settings.streamed_video_format.width,
+        settings.streamed_video_format.height, settings.h26x_keyframe_interval);
+    intra_refresh_period_str = fmt::format(",intra_refresh_period={}", period);
+  }
+  std::string slicing_str;
+  if (settings.h26x_num_slices >= 2) {
+    const int number_of_mbs_in_a_slice = rpi_calculate_number_of_mbs_in_a_slice(
+        settings.streamed_video_format.height, settings.h26x_num_slices);
+    slicing_str =
+        fmt::format(",number_of_mbs_in_a_slice={}", number_of_mbs_in_a_slice);
+  }
+  // BUG RPI FOUNDATION: video_bitrate_mode=1 makes encoder non functional
+  // rpi v4l2 encoder takes bit/s instead of kbit/s
+  const int bitrateBitsPerSecond =
+      openhd::kbits_to_bits_per_second(settings.h26x_bitrate_kbits);
+  std::string bitrate_str;
+  bitrate_str = fmt::format(",video_bitrate={}", bitrateBitsPerSecond);
+  std::stringstream ret;
+  ret << fmt::format(
+      "x264enc name=rpi_v4l2_encoder "
+      "extra-controls=\"controls,repeat_sequence_header=1,h264_profile=1,h264_"
+      "level={}{},h264_i_frame_period={},generate_access_unit_delimiters=1{}{}{"
+      "}\" ! ",
+      rpi_h264_encode_level_v4l2_int, bitrate_str,
+      settings.h26x_keyframe_interval, quantization_str,
+      intra_refresh_period_str, slicing_str);
+  ret << fmt::format(
+      "video/x-h264,level=(string){},profile=constrained-baseline ! ",
+      rpi_h264_encode_level);
+  return ret.str();
+}
+
 static std::string create_rpi_v4l2_h264_encoder(
     const CameraSettings& settings) {
   assert(settings.streamed_video_format.videoCodec == VideoCodec::H264);
@@ -388,7 +455,7 @@ static std::string create_rpi_hdmi_v4l2_stream(const CameraSettings& settings) {
   // ss << "v4l2src io-mode=5 ! ";
   ss << "v4l2src  io-mode=dmabuf ! ";
   ss << "video/x-raw,framerate=30/1,format=UYVY ! ";
-  ss << create_rpi_v4l2_h264_encoder(settings);
+  ss << create_rpi_h264_encoder(settings);
   return ss.str();
 }
 
@@ -480,7 +547,7 @@ static std::string createLibcamerasrcStream(const CameraSettings& settings) {
       // https://github.com/raspberrypi/libcamera/issues/30
       // after the libcamerasrc part, we can just append the rpi v4l2 h264
       // encoder part
-      ss << create_rpi_v4l2_h264_encoder(settings);
+      ss << create_rpi_h264_encoder(settings);
     }
   } else {
     openhd::log::get_default()->warn(
@@ -509,7 +576,7 @@ static std::string create_veye_vl2_stream(const CameraSettings& settings,
       settings.streamed_video_format.height,
       settings.streamed_video_format.framerate);
   if (settings.streamed_video_format.videoCodec == VideoCodec::H264) {
-    ss << create_rpi_v4l2_h264_encoder(settings);
+    ss << create_rpi_h264_encoder(settings);
   } else {
     openhd::log::get_default()->warn(
         "No h265 encoder on rpi, using SW encode (will almost 100% result in "
@@ -863,7 +930,7 @@ static std::string createDummyStreamX(const CameraSettings& settings) {
     ss << createSwEncoder(settings);
   } else {
     if (platform.is_rpi()) {
-      ss << create_rpi_v4l2_h264_encoder(settings);
+      ss << create_rpi_h264_encoder(settings);
     } else if (platform.is_rock()) {
       ss << createRockchipEncoderPipeline(settings);
     } else {
@@ -931,7 +998,7 @@ static std::string create_dummy_filesrc_stream(const CameraSettings& settings) {
   } else {
     if (platform.is_rpi()) {
       if (settings.streamed_video_format.videoCodec == VideoCodec::H264) {
-        ss << create_rpi_v4l2_h264_encoder(settings);
+        ss << create_rpi_h264_encoder(settings);
       } else {
         ss << createSwEncoder(settings);
       }
