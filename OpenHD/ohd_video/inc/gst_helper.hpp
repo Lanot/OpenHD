@@ -325,19 +325,7 @@ static int rpi_calculate_intra_refresh_period(int frame_width_px,
 // lower, so we can get a higher bitrate on scenes with less change (openhd
 // values consistency over everything else)
 
-static std::string create_rpi_h264_encoder(const CameraSettings& settings) {
-  const auto platform = OHDPlatform::instance();
-  if (platform.is_rpi5()) {
-    openhd::log::get_default()->warn("Create RPI5 H264 encoder");
-    return create_rpi5_h264_encoder(settings);
-  } else {
-    openhd::log::get_default()->warn("Create RPI4/other H264 encoder");
-    return create_rpi_v4l2_h264_encoder(settings);
-  }
-}
-
-static std::string create_rpi5_h264_encoder(
-    const CameraSettings& settings) {
+static std::string create_rpi5_h264_encoder(const CameraSettings& settings) {
   assert(settings.streamed_video_format.videoCodec == VideoCodec::H264);
   // Level wikipedia: https://de.wikipedia.org/wiki/H.264#Level
   // If the level selected is too low, the stream will straight out not start
@@ -391,8 +379,7 @@ static std::string create_rpi5_h264_encoder(
   return ret.str();
 }
 
-static std::string create_rpi_v4l2_h264_encoder(
-    const CameraSettings& settings) {
+static std::string create_rpi_v4l2_h264_encoder(const CameraSettings& settings) {
   assert(settings.streamed_video_format.videoCodec == VideoCodec::H264);
   // Level wikipedia: https://de.wikipedia.org/wiki/H.264#Level
   // If the level selected is too low, the stream will straight out not start
@@ -444,6 +431,17 @@ static std::string create_rpi_v4l2_h264_encoder(
       "video/x-h264,level=(string){},profile=constrained-baseline ! ",
       rpi_h264_encode_level);
   return ret.str();
+}
+
+static std::string create_rpi_h264_encoder(const CameraSettings& settings) {
+  const auto platform = OHDPlatform::instance();
+  if (platform.is_rpi5()) {
+    openhd::log::get_default()->warn("Create RPI5 H264 encoder");
+    return create_rpi5_h264_encoder(settings);
+  } else {
+    openhd::log::get_default()->warn("Create RPI4/other H264 encoder");
+    return create_rpi_v4l2_h264_encoder(settings);
+  }
 }
 
 /**
