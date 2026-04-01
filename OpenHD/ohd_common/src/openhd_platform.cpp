@@ -57,7 +57,7 @@ static int internal_discover_platform() {
     return X_PLATFORM_TYPE_ALWINNER_X20;
   }
 
-  if (OHDFilesystemUtil::exists("/boot/config.txt")) {
+  if (OHDFilesystemUtil::exists("/boot/config.txt") || OHDFilesystemUtil::exists("/boot/firmware/config.txt")) {
     openhd::log::get_default()->warn(
         "Detected potential Raspberry Pi platform.");
     const auto filename_proc_cpuinfo = "/proc/cpuinfo";
