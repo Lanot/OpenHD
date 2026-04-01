@@ -50,9 +50,12 @@ class EthernetLink : public OHDLink {
   openhd::Config m_config;
   // Configuration variables (defaults if not overridden)
   std::string GROUND_UNIT_IP = "192.168.2.1";
-  std::string AIR_UNIT_IP = "192.168.2.18";
-  int VIDEO_PORT = 5910;
-  int TELEMETRY_PORT = 5920;
+  //std::string AIR_UNIT_IP = "192.168.2.18";
+  std::string AIR_UNIT_IP = "192.168.2.2";
+  // int VIDEO_PORT = 5910;
+  // int TELEMETRY_PORT = 5920;
+  int VIDEO_PORT = 5600;
+  int TELEMETRY_PORT = 5760;
 
   std::unique_ptr<openhd::UDPForwarder> m_video_tx;  // Video transmitter
   std::unique_ptr<openhd::UDPReceiver> m_video_rx;   // Video receiver
