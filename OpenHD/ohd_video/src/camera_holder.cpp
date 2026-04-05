@@ -139,10 +139,7 @@ std::vector<openhd::Setting> CameraHolder::get_all_settings() {
   // if(m_camera.sensor_name!="unknown"){
   //   ret.emplace_back(openhd::create_read_only_string("V_CAM_SENSOR",m_camera.sensor_name));
   // }
-  if (!OHDPlatform::instance().is_rpi5()) {
-    unsafe_get_settings().force_sw_encode = true;
-  } else if (!OHDPlatform::instance().is_x20()) {
-    //if (!OHDPlatform::instance().is_x20()) {
+  if (!OHDPlatform::instance().is_x20()) {
     auto cb = [this](std::string, int value) {
       if (!openhd::validate_yes_or_no(value)) return false;
       unsafe_get_settings().force_sw_encode = value;
