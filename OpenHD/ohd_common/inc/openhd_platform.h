@@ -87,8 +87,8 @@ struct OHDPlatform {
   [[nodiscard]] std::string to_string() const;
   static const OHDPlatform& instance();
 
+  bool force_sw_encode() const;
   bool is_rpi() const;
-  bool is_rpi5() const;
   bool is_rock() const;
   bool is_zero3w() const;
   bool is_radxa_cm3() const;

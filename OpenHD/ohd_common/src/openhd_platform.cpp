@@ -310,12 +310,12 @@ std::string OHDPlatform::to_string() const {
   return ss.str();
 }
 
-bool OHDPlatform::is_rpi() const {
-  return platform_type >= 10 && platform_type < 20;
+bool OHDPlatform::force_sw_encode() const {
+  return platform_type == X_PLATFORM_TYPE_RPI_5;
 }
 
-bool OHDPlatform::is_rpi5() const {
-  return platform_type == X_PLATFORM_TYPE_RPI_5;
+bool OHDPlatform::is_rpi() const {
+  return platform_type >= 10 && platform_type < 20;
 }
 
 bool OHDPlatform::is_rock() const {
