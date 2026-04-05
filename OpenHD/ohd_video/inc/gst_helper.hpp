@@ -231,7 +231,7 @@ static std::string createRpicamsrcStream(
   // specific area (which is not really of use to use)
   ss << " ! ";
   if (settings.streamed_video_format.videoCodec == VideoCodec::H264) {
-    if (settings.force_sw_encode || platform.is_rpi5()) {
+    if (settings.force_sw_encode) {
       openhd::log::get_default()->warn("Forced SW encode");
       ss << fmt::format("video/x-raw, width={}, height={}, framerate={}/1 ! ",
                         settings.streamed_video_format.width,
@@ -476,7 +476,7 @@ static std::string createLibcamerasrcStream(const CameraSettings& settings) {
         settings.streamed_video_format.width,
         settings.streamed_video_format.height,
         settings.streamed_video_format.framerate);
-    if (settings.force_sw_encode || platform.is_rpi5()) {
+    if (settings.force_sw_encode) {
       openhd::log::get_default()->warn("Forced SW encode");
       ss << createSwEncoder(settings);
     } else {
@@ -863,7 +863,7 @@ static std::string createDummyStreamX(const CameraSettings& settings) {
       settings.streamed_video_format.width,
       settings.streamed_video_format.height,
       settings.streamed_video_format.framerate);
-  if (settings.force_sw_encode || platform.is_rpi5()) {
+  if (settings.force_sw_encode) {
     ss << createSwEncoder(settings);
   } else {
     if (platform.is_rpi()) {
@@ -930,7 +930,7 @@ static std::string create_dummy_filesrc_stream(const CameraSettings& settings) {
                       settings.streamed_video_format.framerate);
   }
   // ss<<createSwEncoder(settings);
-  if (settings.force_sw_encode || platform.is_rpi5()) {
+  if (settings.force_sw_encode) {
     ss << createSwEncoder(settings);
   } else {
     if (platform.is_rpi()) {
