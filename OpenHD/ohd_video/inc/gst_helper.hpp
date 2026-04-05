@@ -232,7 +232,7 @@ static std::string createRpicamsrcStream(
   ss << " ! ";
   if (settings.streamed_video_format.videoCodec == VideoCodec::H264) {
     //if (settings.force_sw_encode) {
-     if (settings.force_sw_encode || HDPlatform::instance().force_sw_encode()) {
+     if (settings.force_sw_encode || OHDPlatform::instance().force_sw_encode()) {
       openhd::log::get_default()->warn("Forced SW encode");
       ss << fmt::format("video/x-raw, width={}, height={}, framerate={}/1 ! ",
                         settings.streamed_video_format.width,
@@ -478,7 +478,7 @@ static std::string createLibcamerasrcStream(const CameraSettings& settings) {
         settings.streamed_video_format.height,
         settings.streamed_video_format.framerate);
     //if (settings.force_sw_encode) {
-    if (settings.force_sw_encode || HDPlatform::instance().force_sw_encode()) {
+    if (settings.force_sw_encode || OHDPlatform::instance().force_sw_encode()) {
       openhd::log::get_default()->warn("Forced SW encode");
       ss << createSwEncoder(settings);
     } else {
