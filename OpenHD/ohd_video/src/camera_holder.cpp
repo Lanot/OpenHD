@@ -141,6 +141,10 @@ std::vector<openhd::Setting> CameraHolder::get_all_settings() {
   // }
   if (!OHDPlatform::instance().is_x20()) {
     auto cb = [this](std::string, int value) {
+
+      std::cout << "\n\n\n DEBUG FORCE_SW_ENC \n" << std::endl;
+      std::cout << "OHDPlatform::instance().is_rpi5() = " << OHDPlatform::instance().is_rpi5() << "\n\n\n" << std::endl;
+
       if (!openhd::validate_yes_or_no(value)) return false;
       unsafe_get_settings().force_sw_encode = value;
       persist();
