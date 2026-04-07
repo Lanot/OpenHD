@@ -55,14 +55,16 @@ EthernetLink::EthernetLink(const openhd::Config& config, OHDProfile profile)
       GROUND_UNIT_IP = std::string(config.GROUND_UNIT_IP);
       AIR_UNIT_IP = std::string(config.AIR_UNIT_IP);
       VIDEO_PORT = (int)config.VIDEO_PORT;
+	  VIDEO_PORT_SECONDARY = (int)config.VIDEO_PORT + 1;
       TELEMETRY_PORT =(int)config.TELEMETRY_PORT;
 
       // Debugging the values after assignment
       std::cout << "Assigned ethernet parameters:" << std::endl;
       std::cout << "  GROUND_UNIT_IP: " << config.GROUND_UNIT_IP << std::endl;
       std::cout << "  AIR_UNIT_IP: " << AIR_UNIT_IP << std::endl;
-      std::cout << "  VIDEO_PORT: " << VIDEO_PORT << std::endl;
       std::cout << "  TELEMETRY_PORT: " << TELEMETRY_PORT << std::endl;
+      std::cout << "  VIDEO_PORT: " << VIDEO_PORT << std::endl;
+	  std::cout << "  VIDEO_PORT_SECONDARY: " << VIDEO_PORT_SECONDARY << std::endl;
     } catch (const std::exception& ex) {
       std::cerr << "Failed to read ethernet parameters: " << ex.what()
                 << std::endl;
@@ -87,6 +89,7 @@ EthernetLink::EthernetLink(OHDProfile profile)
 EthernetLink::~EthernetLink() {
   // Stop background receivers
   if (m_video_rx) m_video_rx->stopBackground();
+  if (m_video_rx_secondary) m_video_rx_secondary->stopBackground();
   if (m_telemetry_rx) m_telemetry_rx->stopBackground();
 }
 
@@ -94,6 +97,8 @@ void EthernetLink::initialize_air_unit() {
   // Initialize video transmitter for sending video to the ground unit
   m_video_tx =
       std::make_unique<openhd::UDPForwarder>(GROUND_UNIT_IP, VIDEO_PORT);
+  m_video_tx_secondary =
+      std::make_unique<openhd::UDPForwarder>(GROUND_UNIT_IP, VIDEO_PORT_SECONDARY);
 
   // Initialize telemetry transmitter and receiver for bidirectional telemetry
   m_telemetry_tx =
@@ -113,6 +118,10 @@ void EthernetLink::initialize_ground_unit() {
       "0.0.0.0", VIDEO_PORT, [this](const uint8_t* data, std::size_t len) {
         handle_video_data(0, data, len);  // Process incoming video
       });
+  m_video_rx_secondary = std::make_unique<openhd::UDPReceiver>(
+      "0.0.0.0", VIDEO_PORT_SECONDARY, [this](const uint8_t* data, std::size_t len) {
+        handle_video_data(1, data, len);  // Process incoming video
+      });
 
   // Initialize telemetry transmitter and receiver for bidirectional telemetry
   m_telemetry_tx =
@@ -124,6 +133,7 @@ void EthernetLink::initialize_ground_unit() {
 
   // Start video and telemetry receivers in the background
   if (m_video_rx) m_video_rx->runInBackground();
+  if (m_video_rx_secondary) m_video_rx_secondary->runInBackground();
   if (m_telemetry_rx) m_telemetry_rx->runInBackground();
 }
 
@@ -139,10 +149,13 @@ void EthernetLink::transmit_video_data(
     int stream_index,
     const openhd::FragmentedVideoFrame& fragmented_video_frame) {
   // Send video data fragments to the destination
-  if (m_video_tx) {
+  if (m_video_tx && stream_index == 0) {
     for (const auto& fragment : fragmented_video_frame.rtp_fragments) {
       m_video_tx->forwardPacketViaUDP(fragment->data(), fragment->size());
     }
+  }
+  if (m_video_tx_secondary && stream_index == 1) {
+      m_video_tx_secondary->forwardPacketViaUDP(fragment->data(), fragment->size());
   }
 }
 
