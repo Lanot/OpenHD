@@ -263,7 +263,6 @@ void OHDVideoAir::on_video_data(
     const openhd::FragmentedVideoFrame& fragmented_video_frame) {
   // m_console->debug("Got data {}
   // {}",stream_index,fragmented_video_frame.rtp_fragments.size());
-  m_console->debug("on_video_data: got data sindex={}, length={}", stream_index,fragmented_video_frame.rtp_fragments.size());
   if (!(stream_index == 0 || stream_index == 1)) {
     m_console->debug("Invalid stream index: {}", stream_index);
     return;
