@@ -370,7 +370,9 @@ struct XCamera {
       // most likely working resolution
       ret.push_back(ResolutionFramerate{640, 480, 30});
       //custom
+      ret.push_back(ResolutionFramerate{640, 480, 60});
       ret.push_back(ResolutionFramerate{1280, 720, 30});
+      ret.push_back(ResolutionFramerate{1280, 720, 60});
       ret.push_back(ResolutionFramerate{1920, 1080, 30});
       // auto is also a good choice on usb
       ret.push_back(ResolutionFramerate{0, 0, 0});
