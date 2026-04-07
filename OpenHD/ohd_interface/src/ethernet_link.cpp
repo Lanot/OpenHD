@@ -149,13 +149,14 @@ void EthernetLink::transmit_video_data(
     int stream_index,
     const openhd::FragmentedVideoFrame& fragmented_video_frame) {
   // Send video data fragments to the destination
-  if (m_video_tx && stream_index == 0) {
+  if (stream_index == 0 && m_video_tx) {
     for (const auto& fragment : fragmented_video_frame.rtp_fragments) {
       m_video_tx->forwardPacketViaUDP(fragment->data(), fragment->size());
     }
-  }
-  if (m_video_tx_secondary && stream_index == 1) {
+  } else if (stream_index == 1 && m_video_tx_secondary) {
+    for (const auto& fragment : fragmented_video_frame.rtp_fragments) {
       m_video_tx_secondary->forwardPacketViaUDP(fragment->data(), fragment->size());
+    }
   }
 }
 
