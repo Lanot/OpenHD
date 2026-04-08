@@ -211,7 +211,7 @@ std::string GStreamerStream::create_source_encode_pipeline(
     pipeline << OHDGstHelper::createDummyStreamX(setting);
   }
 
-  openhd::log::get_default()->debug("Pipeline created: {}", pipeline.str());
+  openhd::log::get_default()->info("Pipeline created: {}", pipeline.str());
   return pipeline.str();
 }
 
