@@ -45,6 +45,8 @@
  * with '! '. This way we avoid syntax errors.
  */
 namespace OHDGstHelper {
+	static int pipelines_count = 0;
+
 /**
  * Check if we can find gstreamer at run time, throw a runtime error if not.
  */
@@ -91,16 +93,16 @@ static std::string createSwEncoder(const CameraSettings& settings) {
                                settings.h26x_num_slices);
     }
     ss << fmt::format(
-        "x264enc name=swencoder bitrate={} speed-preset=ultrafast  "
+        "x264enc name=swencoder{} bitrate={} speed-preset=ultrafast  "
         "tune=zerolatency key-int-max={} sliced-threads=false threads=2"
-        " intra-refresh={} qp_min=2 qp_step=10 {}! ",
+        " intra-refresh={} qp_min=2 qp_step=10 {}! ", pipelines_count++,
         settings.h26x_bitrate_kbits, settings.h26x_keyframe_interval,
         settings.h26x_intra_refresh_type < 0 ? "false" : "true", slices_str);
 #endif
   } else if (settings.streamed_video_format.videoCodec == VideoCodec::H265) {
     ss << fmt::format(
-        "x265enc name=swencoder bitrate={} speed-preset=ultrafast "
-        "tune=zerolatency key-int-max={} ! ",
+        "x265enc name=swencoder{} bitrate={} speed-preset=ultrafast "
+        "tune=zerolatency key-int-max={} ! ", pipelines_count++,
         settings.h26x_bitrate_kbits, settings.h26x_keyframe_interval);
   }
   return ss.str();
