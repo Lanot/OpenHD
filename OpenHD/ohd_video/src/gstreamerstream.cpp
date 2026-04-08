@@ -290,6 +290,7 @@ void GStreamerStream::setup() {
     openhd::LinkActionHandler::instance().set_cam_info(index, cam_info);
   }
   m_console->debug("Starting pipeline:[{}]", pipeline_content.str());
+  // @TODO: REMOVE IT
   m_console->info("\n\nCAM {}, Starting pipeline:[{}]\n\n", m_camera_holder->get_camera().index, pipeline_content.str());
 
   // Protect against unwanted use - stop and free the pipeline first
