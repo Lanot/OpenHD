@@ -211,7 +211,7 @@ std::string GStreamerStream::create_source_encode_pipeline(
     pipeline << OHDGstHelper::createDummyStreamX(setting);
   }
 
-  openhd::log::get_default()->debug("Pipeline created: {}", pipeline.str());
+  openhd::log::get_default()->info("Pipeline created: {}", pipeline.str());
   return pipeline.str();
 }
 
@@ -290,6 +290,9 @@ void GStreamerStream::setup() {
     openhd::LinkActionHandler::instance().set_cam_info(index, cam_info);
   }
   m_console->debug("Starting pipeline:[{}]", pipeline_content.str());
+  // @TODO: REMOVE IT
+  m_console->info("\n\nCAM {}, Starting pipeline:[{}]\n\n", m_camera_holder->get_camera().index, pipeline_content.str());
+
   // Protect against unwanted use - stop and free the pipeline first
   assert(m_gst_pipeline == nullptr);
   // Now start the (as a string) built pipeline
