@@ -41,7 +41,7 @@ void openhd::set_config_file(const std::string& config_file_path) {
 static openhd::Config load_or_default() {
   try {
     openhd::Config ret{};
-    if (OHDFilesystemUtil::exists("/usr/local/share/openhd/debug.txt")) {
+    //if (OHDFilesystemUtil::exists("/usr/local/share/openhd/debug.txt")) {
       if (!OHDFilesystemUtil::exists(CONFIG_FILE_PATH)) {
         std::cerr << "WARN: No config file [" << CONFIG_FILE_PATH << "] used!"
                   << std::endl;
@@ -50,9 +50,9 @@ static openhd::Config load_or_default() {
         std::cout << "WARN: Advanced config file [" << CONFIG_FILE_PATH
                   << "] used!" << std::endl;
       }
-    }
+    //}
     inih::INIReader r{CONFIG_FILE_PATH};
-    if (OHDFilesystemUtil::exists("/usr/local/share/openhd/debug.txt")) {
+    //if (OHDFilesystemUtil::exists("/usr/local/share/openhd/debug.txt")) {
       // Parse WiFi configuration
       ret.WIFI_ENABLE_AUTODETECT =
           r.Get<bool>("wifi", "WIFI_ENABLE_AUTODETECT", false);
@@ -128,7 +128,7 @@ static openhd::Config load_or_default() {
           r.Get<int>("microhard", "MICROHARD_TELEMETRY_PORT", 5920);
       std::cout << "DEBUG: MICROHARD_TELEMETRY_PORT: " << ret.TELEMETRY_PORT
                 << std::endl;
-    }
+    //}
     // Parse Generic configuration
     ret.GEN_ENABLE_LAST_KNOWN_POSITION =
         r.Get<bool>("generic", "GEN_ENABLE_LAST_KNOWN_POSITION", false);
