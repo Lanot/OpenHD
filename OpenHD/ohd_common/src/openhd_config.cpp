@@ -33,7 +33,7 @@ static std::string CONFIG_FILE_PATH =
     std::string(getConfigBasePath()) + "hardware.config";
 
 static std::string AUTO_FILE_PATH =
-    std::string(getConfigBasePath()) + "auto.txt";
+    std::string(getConfigBasePath()) + "auto_connect.txt";
 
 void openhd::set_config_file(const std::string& config_file_path) {
   std::cout << "DEBUG: Using custom config file path [" << config_file_path
