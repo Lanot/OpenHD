@@ -254,7 +254,8 @@ void GStreamerStream::setup() {
     /*pipeline_content << "video/x-h264,stream-format=byte-stream ! ";
     pipeline_content << OHDGstHelper::createOutputAppSink();*/
   } else {
-    const int rtp_fragment_size = 1440;
+    //const int rtp_fragment_size = 1440; // @customization: For VPN Purposes reduced package size
+    const int rtp_fragment_size = 1000;   // @customization: For VPN Purposes reduced package size
     m_console->debug("Using {} for rtp fragmentation", rtp_fragment_size);
     pipeline_content << OHDGstHelper::create_parse_and_rtp_packetize(
         setting.streamed_video_format.videoCodec, rtp_fragment_size);
