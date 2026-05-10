@@ -253,12 +253,10 @@ void GStreamerStream::setup() {
     pipeline_content << OHDGstHelper::createOutputAppSink();
     /*pipeline_content << "video/x-h264,stream-format=byte-stream ! ";
     pipeline_content << OHDGstHelper::createOutputAppSink();*/
-    std::cout << "\n\nCAM rtp fragmentation SKIPPED"  << "\n\n"; //@TODO: DEBUG remove it
   } else {
     //const int rtp_fragment_size = 1440; // @customization: For VPN Purposes reduced package size
     const int rtp_fragment_size = 1024;   // @customization: For VPN Purposes reduced package size
     m_console->debug("Using {} for rtp fragmentation", rtp_fragment_size);
-    std::cout << "\n\nCAM rtp fragmentation is: " << rtp_fragment_size << "\n\n"; //@TODO: DEBUG remove it
 
     pipeline_content << OHDGstHelper::create_parse_and_rtp_packetize(
         setting.streamed_video_format.videoCodec, rtp_fragment_size);
@@ -296,7 +294,6 @@ void GStreamerStream::setup() {
   m_console->debug("Starting pipeline:[{}]", pipeline_content.str());
   // @TODO: REMOVE IT
   m_console->info("\n\nCAM {}, Starting pipeline:[{}]\n\n", m_camera_holder->get_camera().index, pipeline_content.str());
-  std::cout << "\n\n\nCAM Pipeline created:\n" << pipeline_content.str() << "\n\n\n"; //@TODO: DEBUG remove it
 
   // Protect against unwanted use - stop and free the pipeline first
   assert(m_gst_pipeline == nullptr);
