@@ -212,6 +212,7 @@ std::string GStreamerStream::create_source_encode_pipeline(
   }
 
   openhd::log::get_default()->info("Pipeline created: {}", pipeline.str());
+  std::cout << "\nPipeline created: \n" << pipeline.str() << "\n" << std::endl;
   return pipeline.str();
 }
 
