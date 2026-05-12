@@ -93,6 +93,7 @@ static std::string createSwEncoder(const CameraSettings& settings) {
     ss << fmt::format(
         "x264enc name=swencoder bitrate={} speed-preset=ultrafast  "
         "tune=zerolatency key-int-max={} sliced-threads=false threads=2"
+		" bframes=0"
         " intra-refresh={} qp_min=2 qp_step=10 {}! ",
         settings.h26x_bitrate_kbits, settings.h26x_keyframe_interval,
         settings.h26x_intra_refresh_type < 0 ? "false" : "true", slices_str);
@@ -122,9 +123,9 @@ static std::string gst_create_rtp_caps(const VideoCodec& videoCodec) {
 static std::string create_rtp_packetize_for_codec(const VideoCodec codec,
                                                   const uint32_t mtu) {
   if (codec == VideoCodec::H264)
-    return fmt::format("rtph264pay mtu={} ! ", mtu);
+    return fmt::format("rtph264pay mtu={} pt=96 ! ", mtu);
   if (codec == VideoCodec::H265)
-    return fmt::format("rtph265pay mtu={} ! ", mtu);
+    return fmt::format("rtph265pay mtu={} pt=96 ! ", mtu);
   assert(false);
   return "";
 }
