@@ -32,6 +32,9 @@
 static std::string CONFIG_FILE_PATH =
     std::string(getConfigBasePath()) + "hardware.config";
 
+static std::string AUTO_FILE_PATH =
+    std::string(getConfigBasePath()) + "auto_connect.txt";
+
 void openhd::set_config_file(const std::string& config_file_path) {
   std::cout << "DEBUG: Using custom config file path [" << config_file_path
             << "]" << std::endl;
@@ -41,7 +44,7 @@ void openhd::set_config_file(const std::string& config_file_path) {
 static openhd::Config load_or_default() {
   try {
     openhd::Config ret{};
-    if (OHDFilesystemUtil::exists("/usr/local/share/openhd/debug.txt")) {
+    if (OHDFilesystemUtil::exists(AUTO_FILE_PATH) || OHDFilesystemUtil::exists("/usr/local/share/openhd/debug.txt")) {
       if (!OHDFilesystemUtil::exists(CONFIG_FILE_PATH)) {
         std::cerr << "WARN: No config file [" << CONFIG_FILE_PATH << "] used!"
                   << std::endl;
@@ -52,7 +55,7 @@ static openhd::Config load_or_default() {
       }
     }
     inih::INIReader r{CONFIG_FILE_PATH};
-    if (OHDFilesystemUtil::exists("/usr/local/share/openhd/debug.txt")) {
+    if (OHDFilesystemUtil::exists(AUTO_FILE_PATH) || OHDFilesystemUtil::exists("/usr/local/share/openhd/debug.txt")) {
       // Parse WiFi configuration
       ret.WIFI_ENABLE_AUTODETECT =
           r.Get<bool>("wifi", "WIFI_ENABLE_AUTODETECT", false);

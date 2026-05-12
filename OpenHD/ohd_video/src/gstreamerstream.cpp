@@ -255,8 +255,10 @@ void GStreamerStream::setup() {
     /*pipeline_content << "video/x-h264,stream-format=byte-stream ! ";
     pipeline_content << OHDGstHelper::createOutputAppSink();*/
   } else {
-    const int rtp_fragment_size = 1440;
+    //const int rtp_fragment_size = 1440; // @customization: For VPN Purposes reduced package size
+    const int rtp_fragment_size = 1024;   // @customization: For VPN Purposes reduced package size
     m_console->debug("Using {} for rtp fragmentation", rtp_fragment_size);
+
     pipeline_content << OHDGstHelper::create_parse_and_rtp_packetize(
         setting.streamed_video_format.videoCodec, rtp_fragment_size);
     pipeline_content << OHDGstHelper::createOutputAppSink();
@@ -291,6 +293,9 @@ void GStreamerStream::setup() {
     openhd::LinkActionHandler::instance().set_cam_info(index, cam_info);
   }
   m_console->debug("Starting pipeline:[{}]", pipeline_content.str());
+  // @TODO: REMOVE IT
+  m_console->info("\n\nCAM {}, Starting pipeline:[{}]\n\n", m_camera_holder->get_camera().index, pipeline_content.str());
+
   // Protect against unwanted use - stop and free the pipeline first
   assert(m_gst_pipeline == nullptr);
   // Now start the (as a string) built pipeline
