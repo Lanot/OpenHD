@@ -52,16 +52,23 @@ class EthernetLink : public OHDLink {
   std::string GROUND_UNIT_IP = "192.168.2.1";
   std::string AIR_UNIT_IP = "192.168.2.18";
   int VIDEO_PORT = 5910;
-  int VIDEO_PORT_SEC = 5911;
   int TELEMETRY_PORT = 5920;
 
-  std::unique_ptr<openhd::UDPForwarder> m_video_tx;  // Video transmitter
+  int VIDEO_PORT_SEC = 5911;
+  std::string GROUND_UNIT_IP_SEC = "";
+  std::string AIR_UNIT_IP_SEC = "";
+
+  //std::unique_ptr<openhd::UDPForwarder> m_video_tx;  // Video transmitter
   std::unique_ptr<openhd::UDPReceiver> m_video_rx;   // Video receiver
-  std::unique_ptr<openhd::UDPForwarder> m_video_tx_sec;  // Video transmitter
+  //std::unique_ptr<openhd::UDPForwarder> m_video_tx_sec;  // Video transmitter
+
   std::unique_ptr<openhd::UDPReceiver> m_video_rx_sec;   // Video receiver
-  std::unique_ptr<openhd::UDPForwarder>
-      m_telemetry_tx;                                   // Telemetry transmitter
+  // std::unique_ptr<openhd::UDPForwarder> m_telemetry_tx; // Telemetry transmitter
   std::unique_ptr<openhd::UDPReceiver> m_telemetry_rx;  // Telemetry receiver
+
+  std::unique_ptr<openhd::UDPMultiForwarder> m_video_tx;  // Video transmitter
+  std::unique_ptr<openhd::UDPMultiForwarder> m_video_tx_sec;  // Video transmitter
+  std::unique_ptr<openhd::UDPMultiForwarder> m_telemetry_tx;
 
   void initialize_air_unit();
   void initialize_ground_unit();
