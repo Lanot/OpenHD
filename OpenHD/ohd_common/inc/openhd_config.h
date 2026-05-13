@@ -53,6 +53,7 @@ struct Config {
   std::string GROUND_UNIT_IP = "";
   std::string AIR_UNIT_IP = "";
   int VIDEO_PORT = 5000;
+  int VIDEO_PORT_SEC = 5001;
   int TELEMETRY_PORT = 5600;
 
   // ETHERNET LINK FOR MICROHARD

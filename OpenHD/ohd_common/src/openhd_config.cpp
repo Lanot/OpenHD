@@ -88,8 +88,13 @@ static openhd::Config load_or_default() {
       std::cout << "DEBUG: GROUND_UNIT_IP: " << ret.GROUND_UNIT_IP << std::endl;
       ret.AIR_UNIT_IP = r.Get<std::string>("ethernet", "AIR_UNIT_IP", "");
       std::cout << "DEBUG: AIR_UNIT_IP: " << ret.AIR_UNIT_IP << std::endl;
+
       ret.VIDEO_PORT = r.Get<int>("ethernet", "VIDEO_PORT", 5000);
       std::cout << "DEBUG: VIDEO_PORT: " << ret.VIDEO_PORT << std::endl;
+
+      ret.VIDEO_PORT_SEC = r.Get<int>("ethernet", "VIDEO_PORT_SEC", 5001);
+      std::cout << "DEBUG: VIDEO_PORT_SEC: " << ret.VIDEO_PORT_SEC << std::endl;
+
       ret.TELEMETRY_PORT = r.Get<int>("ethernet", "TELEMETRY_PORT", 5600);
       std::cout << "DEBUG: TELEMETRY_PORT: " << ret.TELEMETRY_PORT << std::endl;
 

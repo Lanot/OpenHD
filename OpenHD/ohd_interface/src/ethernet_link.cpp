@@ -55,7 +55,7 @@ EthernetLink::EthernetLink(const openhd::Config& config, OHDProfile profile)
       GROUND_UNIT_IP = std::string(config.GROUND_UNIT_IP);
       AIR_UNIT_IP = std::string(config.AIR_UNIT_IP);
       VIDEO_PORT = (int)config.VIDEO_PORT;
-      VIDEO_PORT_SEC = (int)config.VIDEO_PORT + 1;
+      VIDEO_PORT_SEC = (int)config.VIDEO_PORT_SEC;
       TELEMETRY_PORT =(int)config.TELEMETRY_PORT;
 
       // Debugging the values after assignment
