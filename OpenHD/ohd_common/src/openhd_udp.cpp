@@ -64,9 +64,9 @@ void openhd::UDPForwarder::forwardPacketViaUDP(
   const auto ret = sendto(sockfd, packet, packetSize, 0,
                           (const struct sockaddr *)&saddr, sizeof(saddr));
   if (ret < 0 || ret != packetSize) {
-    get_console()->warn("Error sending packet of size:{} to {}:{} code:{} {}",
-                        packetSize, client_addr, client_udp_port, ret,
-                        strerror(errno));
+     get_console()->debug("Error sending packet of size:{} to {}:{} code:{} {}",
+                         packetSize, client_addr, client_udp_port, ret,
+                         strerror(errno));
   }
 }
 
@@ -169,8 +169,8 @@ void openhd::UDPReceiver::forwardPacketViaUDP(
   const auto ret = sendto(mSocket, packet, packetSize, 0,
                           (const struct sockaddr *)&saddr, sizeof(saddr));
   if (ret < 0 || ret != packetSize) {
-    get_console()->warn("Error sending packet of size:{} to {}:{} code:{} {}",
-                        packetSize, destIp, destPort, ret, strerror(errno));
+     get_console()->debug("Error sending packet of size:{} to {}:{} code:{} {}",
+                         packetSize, destIp, destPort, ret, strerror(errno));
   }
 }
 
