@@ -81,11 +81,8 @@ struct EthernetConfig {
 
 
   int video_port = 5910;
-  int telemetry_port = 5920;
-
   int video_port_sec  = 5911;
-  std::string ground_unit_ip_sec = "";
-  std::string air_unit_ip_sec = "";
+  int telemetry_port = 5920;
 
   // Parse Ethernet configuration from string
   static EthernetConfig fromString(const std::string& content) {
@@ -109,10 +106,6 @@ struct EthernetConfig {
           config.telemetry_port = std::stoi(value);
         else if (key == "VIDEO_PORT_SEC")
           config.video_port_sec = std::stoi(value);
-        else if (key == "GROUND_UNIT_IP_SEC")
-          config.ground_unit_ip_sec = value;
-        else if (key == "AIR_UNIT_IP_SEC")
-          config.air_unit_ip_sec = value;
       }
     }
     return config;
@@ -122,9 +115,7 @@ struct EthernetConfig {
   std::string toString() const {
     std::ostringstream stream;
     stream << "GROUND_UNIT_IP=" << ground_unit_ip << "\n";
-    stream << "GROUND_UNIT_IP_SEC=" << ground_unit_ip_sec << "\n";
     stream << "AIR_UNIT_IP=" << air_unit_ip << "\n";
-    stream << "AIR_UNIT_IP_SEC=" << air_unit_ip_sec << "\n";
     stream << "VIDEO_PORT=" << video_port << "\n";
     stream << "VIDEO_PORT_SEC=" << video_port_sec << "\n";
     stream << "TELEMETRY_PORT=" << telemetry_port << "\n";

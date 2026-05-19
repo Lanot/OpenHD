@@ -55,18 +55,14 @@ EthernetLink::EthernetLink(const openhd::Config& config, OHDProfile profile)
       GROUND_UNIT_IP = std::string(config.GROUND_UNIT_IP);
       AIR_UNIT_IP = std::string(config.AIR_UNIT_IP);
       VIDEO_PORT = (int)config.VIDEO_PORT;
-      TELEMETRY_PORT =(int)config.TELEMETRY_PORT;
-
       VIDEO_PORT_SEC = (int)config.VIDEO_PORT_SEC;
-      GROUND_UNIT_IP_SEC = std::string(config.GROUND_UNIT_IP_SEC);
-      AIR_UNIT_IP_SEC = std::string(config.AIR_UNIT_IP_SEC);
+      TELEMETRY_PORT =(int)config.TELEMETRY_PORT;
 
       // Debugging the values after assignment
       std::cout << "Assigned ethernet parameters:" << std::endl;
-      std::cout << "  GROUND_UNIT_IP: " << config.GROUND_UNIT_IP << std::endl;
-      std::cout << "  GROUND_UNIT_IP_SEC: " << config.GROUND_UNIT_IP_SEC << std::endl;
-      std::cout << "  AIR_UNIT_IP: " << AIR_UNIT_IP << std::endl;
-      std::cout << "  AIR_UNIT_IP_SEC: " << AIR_UNIT_IP_SEC << std::endl;
+      std::cout << "  GROUND_UNIT_IP (s): " << config.GROUND_UNIT_IP << std::endl;
+      std::cout << "  AIR_UNIT_IP (s): " << AIR_UNIT_IP << std::endl;
+
       std::cout << "  VIDEO_PORT: " << VIDEO_PORT << std::endl;
       std::cout << "  VIDEO_PORT_SEC: " << VIDEO_PORT_SEC << std::endl;
       std::cout << "  TELEMETRY_PORT: " << TELEMETRY_PORT << std::endl;
@@ -119,19 +115,18 @@ void EthernetLink::initialize_air_unit() {
   // Initialize telemetry transmitter and receiver for bidirectional telemetry
   m_telemetry_tx = std::make_unique<openhd::UDPMultiForwarder>();
 
-  if (GROUND_UNIT_IP != "") {
-    std::cout << "MFRD NOTE: GROUND_UNIT_IP: Added  video and telemetry forwarding to "<< GROUND_UNIT_IP << std::endl;
-    m_video_tx->addForwarder(GROUND_UNIT_IP, VIDEO_PORT);
-    m_video_tx_sec->addForwarder(GROUND_UNIT_IP, VIDEO_PORT_SEC);
-    m_telemetry_tx->addForwarder(GROUND_UNIT_IP, TELEMETRY_PORT);
-  }
+  // ---------------------------------------------------------------------------------------------------------------- //
+  std::vector<std::string> GROUND_UNIT_IPS = OHDUtil::split_into_substrings(GROUND_UNIT_IP, ',');
+  for (const std::string& UIP : GROUND_UNIT_IPS) {
+    if (UIP != "") {
+      m_video_tx->addForwarder(UIP, VIDEO_PORT);
+      m_video_tx_sec->addForwarder(UIP, VIDEO_PORT_SEC);
+      m_telemetry_tx->addForwarder(UIP, TELEMETRY_PORT);
 
-  if (GROUND_UNIT_IP_SEC != "") {
-    std::cout << "MFRD NOTE: GROUND_UNIT_IP_SEC: Added  video and telemetry forwarding to "<< GROUND_UNIT_IP_SEC << std::endl;
-    m_video_tx->addForwarder(GROUND_UNIT_IP_SEC, VIDEO_PORT);
-    m_video_tx_sec->addForwarder(GROUND_UNIT_IP_SEC, VIDEO_PORT_SEC);
-    m_telemetry_tx->addForwarder(GROUND_UNIT_IP_SEC, TELEMETRY_PORT);
+      std::cout << "MFRD NOTE: GROUND_UNIT_IP: Added video and telemetry forwarding to "<< UIP << std::endl;
+    }
   }
+  // ---------------------------------------------------------------------------------------------------------------- //
 
   // Start telemetry receiver in the background
   if (m_telemetry_rx) m_telemetry_rx->runInBackground();
@@ -156,18 +151,19 @@ void EthernetLink::initialize_ground_unit() {
       "0.0.0.0", TELEMETRY_PORT, [this](const uint8_t* data, std::size_t len) {
         handle_telemetry_data(data, len);  // Process incoming telemetry
       });
-
   m_telemetry_tx = std::make_unique<openhd::UDPMultiForwarder>();
 
-  if (AIR_UNIT_IP != "") {
-    std::cout << "MFRD NOTE: AIR_UNIT_IP: Added telemetry forwarding to " << AIR_UNIT_IP  << std::endl;
-    m_telemetry_tx->addForwarder(AIR_UNIT_IP, TELEMETRY_PORT);
-  }
 
-  if (AIR_UNIT_IP_SEC != "") {
-    std::cout << "MFRD NOTE: AIR_UNIT_IP_SEC: Added telemetry forwarding to " << AIR_UNIT_IP_SEC  << std::endl;
-    m_telemetry_tx->addForwarder(AIR_UNIT_IP_SEC, TELEMETRY_PORT);
+  // ---------------------------------------------------------------------------------------------------------------- //
+  std::vector<std::string> AIR_UNIT_IPS = OHDUtil::split_into_substrings(AIR_UNIT_IP, ',');
+  for (const std::string& UIP : AIR_UNIT_IPS) {
+    if (UIP != "") {
+      m_telemetry_tx->addForwarder(UIP, TELEMETRY_PORT);
+
+      std::cout << "MFRD NOTE: AIR_UNIT_IP: Added telemetry forwarding to "<< UIP << std::endl;
+    }
   }
+  // ---------------------------------------------------------------------------------------------------------------- //
 
   // Start video and telemetry receivers in the background
   if (m_video_rx) m_video_rx->runInBackground();
