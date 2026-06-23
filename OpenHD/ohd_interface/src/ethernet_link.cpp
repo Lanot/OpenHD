@@ -126,6 +126,8 @@ void EthernetLink::initialize_air_unit() {
       std::cout << "MFRD NOTE: GROUND_UNIT_IP: Added video and telemetry forwarding to "<< UIP << std::endl;
     }
   }
+  // @todo: handle VIDEO_ADDITIONAL_GROUND_UNIT_IP
+  // @todo: handle TELEMETRY_ADDITIONAL_GROUND_UNIT_IP
   // ---------------------------------------------------------------------------------------------------------------- //
 
   // Start telemetry receiver in the background
@@ -163,6 +165,7 @@ void EthernetLink::initialize_ground_unit() {
       std::cout << "MFRD NOTE: AIR_UNIT_IP: Added telemetry forwarding to "<< UIP << std::endl;
     }
   }
+  // @todo: handle TELEMETRY_ADDITIONAL_AIR_UNIT_IP
   // ---------------------------------------------------------------------------------------------------------------- //
 
   // Start video and telemetry receivers in the background
