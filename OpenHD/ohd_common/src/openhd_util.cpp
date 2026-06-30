@@ -79,7 +79,7 @@ std::optional<std::string> OHDUtil::run_command_out(const std::string& command,
       // if the pipe opening fails, this doesn't mean the command failed (see
       // above) But rather we need to find a different way to implement this
       // functionality on this platform.
-      openhd::log::get_default()->error("Cannot execute command [{}]", command);
+      // openhd::log::get_default()->error("Cannot execute command [{}]", command);
       return std::nullopt;
     }
     std::string raw_value;
